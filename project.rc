@@ -1,0 +1,27 @@
+
+#include "project.h"
+
+IDR_MYMENU MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit", ID_FILE_EXIT
+    END
+
+    POPUP "&Stuff"
+    BEGIN
+        MENUITEM "&Go", ID_STUFF_GO
+        MENUITEM "G&o somewhere else", 0, GRAYED
+    END
+END
+
+IDI_IKONA ICON "Download.ico"
+
+MYDIALOG DIALOG 50, 50, 300, 150// identificator DIALOG x, y, width, height
+ CAPTION "My Dialog"
+ STYLE WS_CAPTION | WS_POPUP
+ {
+     LTEXT "Description of:", 1, 5, 5, 100, 10 // "Descripcion", Identificator, x, y, width, height
+     EDITTEXT  ID_TEXT, 5, 20, 130, 10
+     DEFPUSHBUTTON "&Close", DIALOG_BUTTON, 5, 100, 60, 15, WS_TABSTOP // "Descripcion", Identificator, x, y, width, height, TABSTOP= Ultimo elemento donde se puede hacer tabulación
+ }
