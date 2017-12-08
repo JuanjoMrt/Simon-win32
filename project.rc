@@ -15,7 +15,7 @@ BEGIN
     END
 END
 
-IDI_IKONA ICON "Download.ico"
+IDI_IKONA ICON "resources/simon.ico"
 
 MYDIALOG DIALOG 50, 50, 300, 150// identificator DIALOG x, y, width, height
  CAPTION "My Dialog"

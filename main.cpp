@@ -22,10 +22,20 @@
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
+/*It will display all the control buttons*/
 void AddControl(HWND hwnd);
+/*The action performed by the playable buttons*/
+void button_action(int button_num);
 
+bool start_game = true,
+     loose = false;
+
+/*Scale of the main window and it's components*/
 float scale = 3;
+
+/*Instance of the game*/
 Game simon_game;
+
 HBITMAP hColorImage, hBlackImage;
 HWND hWndScore;
 
@@ -112,21 +122,29 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         case WM_COMMAND:
             switch(LOWORD(wParam)){
                 case BUTTON_1:
-                    simon_game.talk();
-                    simon_game.WhoTalk(1);
+                    button_action(1);
                 break;
                 case BUTTON_2:
-                    simon_game.talk();
-                    simon_game.WhoTalk(2);
+                    button_action(2);
                 break;
                 case BUTTON_3:
-                    simon_game.talk();
-                    simon_game.WhoTalk(3);
+                    button_action(3);
                 break;
                 case BUTTON_4:
-                    simon_game.talk();
-                    simon_game.WhoTalk(4);
+                    button_action(4);
                 break;
+                case BUTTON_START:
+                    simon_game.start();
+                    loose = false;
+                    int current_number = simon_game.GetCurrentNum();
+
+                    SendMessage(GetDlgItem(hwnd, 100 + current_number), BM_SETSTATE,TRUE, 0);
+                    Sleep(1000);
+                    SendMessage(GetDlgItem(hwnd, 100 + current_number), BM_SETSTATE,FALSE, 0);
+                    start_game = false;
+                    MessageBox(hwnd, "Your turn", "Play", MB_OK);
+                break;
+
             }
             break;
         case WM_DESTROY:
@@ -136,13 +154,50 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             return DefWindowProc (hwnd, message, wParam, lParam);
     }
 
+    //cout << "counter: "<< simon_game.counter << " score: "<< simon_game.score << " size: " << simon_game.sequence.size() <<endl;
+
+    if(simon_game.endOfLvl() && !start_game && !loose){
+        cout << "End of Level" <<endl;
+
+        //MessageBox(hwnd, "Click OK to play level " score + 1, "New Level", MB_OK); Pasar de int a lo que sea
+        switch(simon_game.getSizeSeq()){
+            case 3: MessageBox(hwnd, "Lvl 3, That's a good start", "New Level", MB_OK); break;
+            case 5:MessageBox(hwnd, "WOW You're on lvl 5", "New Level", MB_OK); break;
+            case 8:MessageBox(hwnd, "Omg! You're on fire", "New Level", MB_OK); break;
+            case 11:MessageBox(hwnd, "Ok, this can't be true", "New Level", MB_OK); break;
+            case 15:MessageBox(hwnd, "Are you cheating?", "New Level", MB_OK); break;
+            default: MessageBox(hwnd, "Click OK for a new level", "New Level", MB_OK);
+        }
+
+        simon_game.AddALevel();
+        cout << "Sequence: ";
+        for(int i = 0; i < simon_game.getSizeSeq(); i++){
+            int color = simon_game.GetColorPos(i);
+            SendMessage(GetDlgItem(hwnd, 100 + color), BM_SETSTATE,TRUE, 0);
+            Sleep(1000);
+            SendMessage(GetDlgItem(hwnd, 100 + color), BM_SETSTATE,FALSE, 0);
+            Sleep(500);
+            cout << color << " ";
+        }
+        cout << endl;
+        simon_game.newLevel();
+    }
+    if(loose){
+        //string score = "Your score is ";
+        MessageBox(hwnd, "You lost", "Looser", MB_OK);
+    }
+
+
+
+
+
     return 0;
 }
 
 
 void AddControl(HWND hwnd){
-        hColorImage = (HBITMAP) LoadImageW(NULL, L"Red.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
-        hBlackImage = (HBITMAP) LoadImageW(NULL, L"Black.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
+        hColorImage = (HBITMAP) LoadImageW(NULL, L"resources/Red.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
+        hBlackImage = (HBITMAP) LoadImageW(NULL, L"resources/Black.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
 
         HWND hbut1 = CreateWindow(
             "BUTTON",  // Predefined class; Unicode assumed
@@ -158,30 +213,30 @@ void AddControl(HWND hwnd){
             NULL);      // Pointer not needed
         SendMessage(hbut1, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hColorImage);
 
-        hColorImage = (HBITMAP) LoadImageW(NULL, L"Green.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
+        hColorImage = (HBITMAP) LoadImageW(NULL, L"resources/Green.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
 
         HWND hbut2 = CreateWindow("BUTTON", "",
-            WS_TABSTOP | WS_VISIBLE | WS_CHILD |  BS_DEFPUSHBUTTON | BS_BITMAP,
+            WS_TABSTOP | WS_VISIBLE | WS_CHILD |  BS_PUSHLIKE | BS_BITMAP,
             150*scale, 10*scale, 100*scale, 100*scale, hwnd,
             (HMENU) BUTTON_2,
             (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE),
             NULL);
          SendMessage(hbut2, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hColorImage);
 
-        hColorImage = (HBITMAP) LoadImageW(NULL, L"Blue.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
+        hColorImage = (HBITMAP) LoadImageW(NULL, L"resources/Blue.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
         HWND hbut3 = CreateWindow(
             "BUTTON", "",
-            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_BITMAP,
+            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHLIKE | BS_BITMAP,
             10*scale, 160*scale, 100*scale,100*scale,hwnd,
             (HMENU) BUTTON_3,
             (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE),
             NULL);
          SendMessage(hbut3, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hColorImage);
 
-        hColorImage = (HBITMAP) LoadImageW(NULL, L"Yellow.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
+        hColorImage = (HBITMAP) LoadImageW(NULL, L"resources/Yellow.bmp", IMAGE_BITMAP, 100*scale, 100*scale, LR_LOADFROMFILE);
         HWND hbut4 = CreateWindow(
             "BUTTON", "",
-            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_BITMAP,
+            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHLIKE | BS_BITMAP,
             150*scale, 160*scale, 100*scale,100*scale,hwnd,
             (HMENU) BUTTON_4,
             (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE),
@@ -208,11 +263,16 @@ void AddControl(HWND hwnd){
         SetWindowText(hWndScore, TEXT("Control string"));
         */
 
+       // SetWindowText(hWndScore, TEXT(score));
+
 
 }
 
-
-
+void button_action(int button_num){
+    bool check = simon_game.check(button_num);
+    if(!check)
+        loose = true;
+}
 
 
 
