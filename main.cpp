@@ -38,6 +38,8 @@ Game simon_game;
 
 HBITMAP hColorImage, hBlackImage;
 HWND hWndScore;
+int current_number;
+int timer_mode = 1000;
 
 /*  Make the class name into a global variable  */
 TCHAR szClassName[ ] = _T("CodeBlocksWindowsApp");
@@ -83,7 +85,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
            270*scale,                 /* The programs width */
            285*scale,                 /* and height in pixels */
            HWND_DESKTOP,        /* The window is a child-window to desktop */
-           NULL,                /* No menu */
+           LoadMenu(NULL, MAKEINTRESOURCE(ID_MYMENU)),                /* No menu */
            hThisInstance,       /* Program Instance handler */
            NULL                 /* No Window Creation data */
            );
@@ -136,13 +138,30 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                 case BUTTON_START:
                     simon_game.start();
                     loose = false;
-                    int current_number = simon_game.GetCurrentNum();
+                    current_number = simon_game.GetCurrentNum();
 
                     SendMessage(GetDlgItem(hwnd, 100 + current_number), BM_SETSTATE,TRUE, 0);
-                    Sleep(1000);
+                    Sleep(timer_mode);
                     SendMessage(GetDlgItem(hwnd, 100 + current_number), BM_SETSTATE,FALSE, 0);
                     start_game = false;
                     MessageBox(hwnd, "Your turn", "Play", MB_OK);
+                break;
+                case HARD_START:
+                    timer_mode = 250;
+                    simon_game.start();
+                    loose = false;
+                    current_number = simon_game.GetCurrentNum();
+
+                    SendMessage(GetDlgItem(hwnd, 100 + current_number), BM_SETSTATE,TRUE, 0);
+                    Sleep(timer_mode);
+                    SendMessage(GetDlgItem(hwnd, 100 + current_number), BM_SETSTATE,FALSE, 0);
+                    start_game = false;
+                    MessageBox(hwnd, "Your turn", "Play", MB_OK);
+                break;
+                case ID_FILE_EXIT:
+                    PostQuitMessage(0);
+                break;
+                case ID_STUFF_GO:
                 break;
 
             }
@@ -174,9 +193,9 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         for(int i = 0; i < simon_game.getSizeSeq(); i++){
             int color = simon_game.GetColorPos(i);
             SendMessage(GetDlgItem(hwnd, 100 + color), BM_SETSTATE,TRUE, 0);
-            Sleep(1000);
+            Sleep(timer_mode);
             SendMessage(GetDlgItem(hwnd, 100 + color), BM_SETSTATE,FALSE, 0);
-            Sleep(500);
+            Sleep(timer_mode/2);
             cout << color << " ";
         }
         cout << endl;

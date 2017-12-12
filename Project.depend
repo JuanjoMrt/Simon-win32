@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1512769967 source:c:\users\juanjo\documents\megasync\universidad\3 vilna\1er cuatrimestre\windows api programing\programas\project\main.cpp
+1513092161 source:c:\users\juanjo\documents\megasync\universidad\3 vilna\1er cuatrimestre\windows api programing\programas\project\main.cpp
 	"project.h"
 	"game.h"
 	<tchar.h>
@@ -10,10 +10,10 @@
 	<string.h>
 	<iostream>
 
-1512494554 c:\users\juanjo\documents\megasync\universidad\3 vilna\1er cuatrimestre\windows api programing\programas\project\project.h
+1513091897 c:\users\juanjo\documents\megasync\universidad\3 vilna\1er cuatrimestre\windows api programing\programas\project\project.h
 	<windows.h>
 
-1512494521 source:c:\users\juanjo\documents\megasync\universidad\3 vilna\1er cuatrimestre\windows api programing\programas\project\project.rc
+1513091917 source:c:\users\juanjo\documents\megasync\universidad\3 vilna\1er cuatrimestre\windows api programing\programas\project\project.rc
 	"project.h"
 
 1511973274 source:c:\users\juanjo\documents\megasync\universidad\3 vilna\1er cuatrimestre\windows api programing\programas\project\game.cpp

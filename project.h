@@ -10,3 +10,5 @@
 
 #define ID_FILE_EXIT 9001
 #define ID_STUFF_GO 9002
+#define HARD_START 9003
+#define ID_MYMENU 1000

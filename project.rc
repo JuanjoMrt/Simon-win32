@@ -1,17 +1,17 @@
 
 #include "project.h"
 
-IDR_MYMENU MENU
+ID_MYMENU MENU
 BEGIN
     POPUP "&File"
     BEGIN
         MENUITEM "E&xit", ID_FILE_EXIT
     END
 
-    POPUP "&Stuff"
+    POPUP "&Mode"
     BEGIN
-        MENUITEM "&Go", ID_STUFF_GO
-        MENUITEM "G&o somewhere else", 0, GRAYED
+        MENUITEM "&Normal", BUTTON_START
+        MENUITEM "&Fast", HARD_START
     END
 END
 
